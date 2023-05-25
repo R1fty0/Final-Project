@@ -97,3 +97,4 @@ class Submarine(Player, Utility):
             rooms[key] = new_room
             key += 1
         return rooms
+    
