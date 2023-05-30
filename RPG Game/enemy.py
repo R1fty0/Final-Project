@@ -1,5 +1,4 @@
-from utility import Character
-
+from characters import Character
 
 
 class Enemy(Character):
