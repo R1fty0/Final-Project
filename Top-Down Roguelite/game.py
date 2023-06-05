@@ -1,29 +1,34 @@
-import sys
-import pygame
-import window_utillty
-import image_and_colors
-import gameobjects
+from image_n_colors import Color
+from image_n_colors import Image
+from scene import Scene
+from text import Text
+import game_manager
 
 """ Program Constants """
 FPS = 60
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 800
-WINDOW_NAME = "Game 2"
-WINDOW = window_utillty.create_window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME)  # creates a game window
+WINDOW_NAME = "Medieval Manor"
+WINDOW = game_manager.create_window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME)  # creates a game window
 
+""" Main Menu Attributes """
+menu = Scene("Menu", WINDOW)
+BLUE = Color(0, 191, 225)
+WHITE = Color(255, 255, 255)
+title = Text("Ariel", 58, "Medieval Manor", WHITE, BLUE)
+author = Text("Ariel", 32, "Made By Mohit Sah", WHITE, BLUE)
 
-def main():
-    game_clock = pygame.time.Clock()   # creates the game's clock
-    is_running = True   # bool that controls whether the game is running or not
-    while is_running:
-        game_clock.tick(FPS)
-        for event in pygame.event.get():  # closes the window
-            if event.type == pygame.QUIT:
-                sys.exit()
+""" Testing Image """
+arrow = Image("arrow.png").image
+
 
 def main_menu():
-    pass
+    menu.add_function_call("add_color", BLUE)
+    menu.add_function_call("draw_text", title, title.text.get_width() - 150, 250)
+    menu.add_function_call("draw_text", author, author.text.get_width(), 300)
+    # menu.add_function_call("draw_image", arrow, 10, 300)
+    menu.run(FPS)
 
 
 if __name__ == "__main__":
-    main()
+    main_menu()

@@ -68,11 +68,11 @@ class TextEffects:
 
 
 class Text(TextEffects):
-    def __init__(self, font_name, font_size, text, color, background):
+    def __init__(self, font_name, font_size, text, color, background_color):
         """ Creates a new text object. """
         TextEffects.__init__(self)
         self.font = self.load_font(font_name, font_size)
-        self.text = self.create_label(self.font, color, text, background)
+        self.text = self.create_label(self.font, color, text, background_color)
 
     def load_font(self, font_name, font_size) -> pygame.font:
         """ Creates a new font."""
@@ -81,10 +81,10 @@ class Text(TextEffects):
         font = pygame.font.SysFont(font_name, font_size, is_bold, is_italic)
         return font
 
-    def create_label(self, font, color, text, background):
+    def create_label(self, font, color, text, background_color):
         """ Creates a new label given a font. """
         is_aa = self.check_effect_state("is_antialiasing")
-        label = font.render(text, is_aa, 1, color, background)
+        label = font.render(text, is_aa, color.values, background_color.values)
         return label
 
 
