@@ -1,0 +1,4 @@
+- movement with gravity
+- animations
+- shooting
+- enemies with multiple states that attack the player when they are in range
