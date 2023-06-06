@@ -1,4 +1,8 @@
-- movement with gravity
+- movement
 - animations
 - shooting
-- enemies with multiple states that attack the player when they are in range
+- enemies
+- inventory
+- shop
+- load + save
+- procedural generation

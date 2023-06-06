@@ -13,12 +13,15 @@ WINDOW = manager.create_window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME)
 
 """ Main Menu Attributes """
 menu = Scene("Menu", WINDOW)
-BLUE = Color(0, 191, 225)
+PINK = Color(255, 192, 203)
 
+""" Player """
+images = [Image("player_walk1.png", "Images"), Image("player_walk2.png", "Images")]
 
 
 def main_menu():
-    menu.add_function_call("add_color", BLUE)
+    menu.add_function_call("add_color", PINK)
+    menu.add_function_call("draw_image", images[0], 200, 200)
     menu.run(FPS)
 
 
