@@ -5,6 +5,8 @@ class Collider:
     def __init__(self, x, y, width, height):
         """ Creates a collider anchored to the provided x and y coordinates. """
         self.collider = pygame.Rect(x, y, width, height)
+        self.x = x
+        self.y = y
 
     def is_colliding(self, game_object) -> bool:
         """ Returns true if this collider is colliding with a given collider.  """
