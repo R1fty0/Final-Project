@@ -3,6 +3,7 @@ import pygame
 
 class Collider:
     def __init__(self, x, y, width, height):
+        """ Creates a collider anchored to the provided x and y coordinates. """
         self.collider = pygame.Rect(x, y, width, height)
 
     def is_colliding(self, game_object) -> bool:
@@ -15,14 +16,15 @@ class Collider:
 
 # Base Class was made by AI
 class Animation:
-    def __init__(self, image_list: list, frame_duration):
+    def __init__(self, scene, image_list: list, frame_duration):
         """ Creates an animation that can be played upon request. """
         self.image_list = image_list
         self.frame_duration = frame_duration
+        self.scene = scene
 
-    def update(self, scene, current_frame_time, current_frame_index):
+    def update(self, current_frame_time, current_frame_index):
         """ Updates the animation. """
-        current_frame_time += scene.clock.get_time()
+        current_frame_time += self.scene.clock.get_time()
         if current_frame_time >= self.frame_duration:
             current_frame_time = 0
             current_frame_index += 1
@@ -31,10 +33,10 @@ class Animation:
         return current_frame_time, current_frame_index
 
     # may need some work
-    def play(self, scene):
+    def play(self):
         """ Plays the animation and returns its current frame """
         time, frame = self.initialize()
-        time, frame = self.update(scene, time, frame)
+        time, frame = self.update(time, frame)
         return self.image_list[frame]
 
     def initialize(self):
@@ -42,3 +44,4 @@ class Animation:
         current_frame_time = 0
         current_frame_index = 0
         return current_frame_time, current_frame_index
+

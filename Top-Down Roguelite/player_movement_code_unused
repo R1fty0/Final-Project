@@ -1,0 +1,12 @@
+key_pressed = pygame.key.get_pressed()
+        match key_pressed:
+            case pygame.K_w:   # move up
+                pass
+            case pygame.K_a:  # move left
+                pass
+            case pygame.K_s:  # move down
+                pass
+            case pygame.K_d:  # move right
+                pass
+            case pygame.MOUSEBUTTONDOWN:   # shoot
+                pass
