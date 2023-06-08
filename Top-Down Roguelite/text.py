@@ -2,37 +2,6 @@ import pygame
 pygame.font.init()
 
 
-"""
-WinnerFont = pygame.font.SysFont("Century Gothic", int(WindowWidth / 20), True, False)
-    PromptFont = pygame.font.SysFont("Comic Sans MS", int(WindowHeight / 27), False, False)
-
-    ScreenIsRunning = True
-    while ScreenIsRunning:
-
-        Window.fill(Sliver.get_color())  # Background Color
-
-        # Create Text for UI
-        PromptLabel = PromptFont.render("Press any mouse button to continue!", True, 1, Sliver.get_color())
-        WinnerLabel = "none"
-
-        if PlayerThatWon == 1:
-            WinnerLabel = WinnerFont.render("Player 1 Won the Match!", True, 1, Sliver.get_color())
-        elif PlayerThatWon == 2:
-            WinnerLabel = WinnerFont.render("Player 2 Won the Match!", True, 1, Sliver.get_color())
-
-        # Display UI on Screen
-        Window.blit(PromptLabel,
-                    (WindowWidth / 2 - PromptLabel.get_width() / 2, WindowHeight / 2 - PromptLabel.get_height() / 2))
-
-        Window.blit(WinnerLabel,
-                    (WindowWidth / 2 - WinnerLabel.get_width() / 2, WindowHeight / 4 - WinnerLabel.get_height() / 2))
-
-        pygame.display.update()  # Updates the Screen
-
-
-"""
-
-
 class TextEffects:
     def __init__(self):
         self.effects = {"is_italic": False, "is_bold": False, "is_antialiasing": False}

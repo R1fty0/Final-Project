@@ -20,24 +20,24 @@ menu = Scene("menu", game_window)
 game = Scene("game", game_window)
 
 """ Colors and Text """
-menu_color = Color(240, 248, 255)
-game_color = Color(255, 160, 122)
+menu_color = Color(30, 144, 255)
+game_color = Color(255, 0, 0)
 white = Color(255, 255, 255)
 menu_text = Text("Century Gothic", 20, "This is the menu!", white, menu_color)
 game_text = Text("Century Gothic", 20, "This is the game!", white, game_color)
 
-key_pressed = pygame.key.get_pressed()
 
 
 def initialize():
     # initialize menu functions
-    menu.add_function_call("add_color", menu_color)
-    menu.add_function_call("add_text", menu_text, 250, 200)
-    menu.add_function_call("load_scene_on_key_press", key_pressed, pygame.K_q, game)
+    menu.add_function("add_color", menu_color)
+    menu.add_function("add_text", menu_text, 250, 200)
+    menu.add_function("trigger_scene_on_key_pressed", pygame.K_q, game)
 
     # initialize game functions
-    game.add_function_call("add_color", game_color)
-    game.add_function_call("add_text", game_text, 250, 200)
+    game.add_function("add_color", game_color)
+    game.add_function("add_text", game_text, 250, 200)
+    game.add_function("trigger_scene_on_key_pressed", pygame.K_f, menu)
 
     # sets the menu as the starting scene
     game_window.set_current_scene(menu)

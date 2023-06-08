@@ -50,17 +50,19 @@ class Scene:
         self.function_calls = []
         self.window.scenes.append(self)
 
-    def add_function_call(self, function_name, var_1, var_2=None, var_3=None):
+    def add_function(self, function_name, var_1, var_2=None, var_3=None):
         """ Add a function call that will be called when the scene is running.  """
         match function_name:
-            case "draw_image":
-                self.function_calls.append(lambda: self.draw_image(var_1, var_2, var_3))
+            case "add_image":
+                self.function_calls.append(lambda: self.add_image(var_1, var_2, var_3))
             case "add_text":
                 self.function_calls.append(lambda: self.add_text(var_1, var_2, var_3))
             case "add_color":
                 self.function_calls.append(lambda: self.add_color(var_1))
-            case "load_scene_on_key_press":
-                self.function_calls.append(lambda: self.load_scene_on_key_press(var_1, var_2))
+            case "trigger_scene_on_key_pressed":
+                self.function_calls.append(lambda: self.trigger_scene_on_key_pressed(var_1, var_2))
+            case "trigger_scene_on_condition_met":
+                self.function_calls.append(lambda: self.trigger_scene_on_condition_met(var_1, var_2))
             case _:
                 print("Method calls and/or their arguments are invalid")
 
@@ -69,7 +71,7 @@ class Scene:
         for function in self.function_calls:
             function()
 
-    def draw_image(self, image_object, x, y):
+    def add_image(self, image_object, x, y):
         """ Draws an image to the game window at the given x and y coordinates. """
         self.window.window.blit(image_object.image, (x, y))
 
@@ -81,8 +83,24 @@ class Scene:
         """ Fills the game window with a solid color. """
         self.window.window.fill(color.values)
 
-    def load_scene_on_key_press(self, key, next_scene):
-        """ Loads the another scene if a condition is met while the current scene is running. """
+    def trigger_scene_on_key_pressed(self, key, next_scene):
+        """ Loads the given scene if the given key is pressed. """
         key_pressed = pygame.key.get_pressed()
         if key_pressed[key]:
             self.window.set_current_scene(next_scene)
+
+    def trigger_scene_on_condition_met(self, condition, next_scene):
+        """Loads another scene if a given condition if-statement returns true. """
+        if_statement = condition.strip()  # Remove whitespace
+        if if_statement.endswith(":"):
+            if_body = if_statement[:-1]  # Remove the colon at the end
+            try:
+                # Execute the if statement
+                if eval(if_body):  # got this from AI
+                    # load the next scene
+                    self.window.set_current_scene(next_scene)
+            except Exception as e:  # got this from AI
+                print("Error occurred while executing the if statement:")
+                print(e)
+        else:
+            print("Invalid trigger condition. ")
