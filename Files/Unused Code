@@ -1,0 +1,35 @@
+ def add_function(self, function_name, var_1, var_2=None, var_3=None):
+        """ Add a function call that will be called when the scene is running.  """
+        match function_name:
+            case "add_image":
+                self.function_calls.append(lambda: self.add_image(var_1, var_2, var_3))
+            case "add_text":
+                self.function_calls.append(lambda: self.add_text(var_1, var_2, var_3))
+            case "add_color":
+                self.function_calls.append(lambda: self.add_color(var_1))
+            case _:
+                print("Method calls and/or their arguments are invalid")
+
+
+    def add_scene(self, scene):
+        self.scenes.append(scene)
+
+
+class Scene:
+    def __init__(self, name, game_window: Window):
+        """ Creates a new scene that can be run in the game window. """
+        self.game_window = game_window
+        self.name = name
+        self.game_window.add_scene(self)
+
+
+  def set_current_scene(self, scene):
+        """ Set the current scene to the scene with the specified name. """
+        for scenes in self.scenes:
+            if scenes.name == scene.name:
+                self.current_scene = scene
+                break
+        else:
+            print(f"Scene '{scene.name}' not found.")
+
+menu_functions = [window.add_color(WHITE), window.add_text(menu_title, WIDTH/6 - menu_title.text.get_width(), HEIGHT/6 - menu_title.text.get_height())]
