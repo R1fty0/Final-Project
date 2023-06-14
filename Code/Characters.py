@@ -47,3 +47,12 @@ class Animation:
         current_frame_time = 0
         current_frame_index = 0
         return current_frame_time, current_frame_index
+
+
+class Player:
+    def __init__(self):
+        pass
+
+class Enemy:
+    def __init__(self):
+        pass

@@ -33,3 +33,13 @@ class Scene:
             print(f"Scene '{scene.name}' not found.")
 
 menu_functions = [window.add_color(WHITE), window.add_text(menu_title, WIDTH/6 - menu_title.text.get_width(), HEIGHT/6 - menu_title.text.get_height())]
+
+case True:  # Disable an effect
+                match name:
+                    case key if key in self.effects and self.effects[key]:
+                        self.effects[key] = False
+                        print(f"Disabled text effect: {key}.")
+                    case key if key in self.effects and not self.effects[key]:
+                        print("Text effect already disabled.")
+                    case _:
+                        print(f"Invalid text effect: {name}.")

@@ -1,5 +1,6 @@
 import pygame
 import os
+import sys
 pygame.font.init()
 
 
@@ -93,14 +94,22 @@ class Window:
         """ Fills the game window with a solid color. """
         self.window.fill(color.values)
 
-    def set_current_scene(self, scene_name):
+    def set_current_scene(self, scene_name):  # weird exception handing
         """ Sets the current scene based off its name. """
         for scene in self.scenes:
             if scene.name == scene_name:
                 self.current_scene = scene
-            else:
-                print("Scene not found!")
 
+    def run(self):
+        """ Runs the game window. """
+        while True:
+            self.clock.tick(self.fps)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+            for function in self.current_scene.functions:
+                function()
+            pygame.display.update()
 
     def add_scene(self, scene):
         """ Adds a scene to the game window. """
@@ -112,6 +121,14 @@ class Window:
             self.scenes.remove(scene_name)
         except Exception as e:
             print(f"Error removing scene: {e}")
+
+    def switch_scene_on_key_down(self, key, scene):
+        if not isinstance(scene, Scene):
+            print("Error: provided scene not of scene class. ")
+            return
+        key_pressed = pygame.key.get_pressed()
+        if key_pressed[key]:
+            self.set_current_scene(scene.name)
 
 class Scene:
     def __init__(self, name, window):
@@ -129,8 +146,10 @@ class Scene:
                 self.functions.append(lambda: self.window.add_text(arg_1, arg_2, arg_3))
             case "add_color":
                 self.functions.append(lambda: self.window.add_color(arg_1))
+            case "switch_scene_on_key_press":
+                self.functions.append(lambda: self.window.switch_scene_on_key_down(arg_1, arg_2))
             case _:
-                print("Method calls and/or their arguments are invalid")
+                print("Error:\n - Function name may be invalid \n - Function arguments may be invalid ")
 
     def remove_function(self, func_name):
         """ Removes a function from the scene's list of functions. """
@@ -142,28 +161,19 @@ class Scene:
 
 class TextEffects:
     def __init__(self):
-        self.effects = {"is_italic": False, "is_bold": False, "is_antialiasing": False}
+        self.effects = {"italic": False, "bold": False, "antialiasing": False}
 
-    def set(self, name, disable=False):
-        match disable:
-            case False:  # Enable an effect
-                match name:
-                    case key if key in self.effects and not self.effects[key]:
-                        self.effects[key] = True
-                        print(f"Enabled text effect: {key}.")
-                    case key if key in self.effects and self.effects[key]:
-                        print("Text effect already enabled.")
-                    case _:
-                        print(f"Invalid text effect: {name}.")
-            case True:  # Disable an effect
-                match name:
-                    case key if key in self.effects and self.effects[key]:
-                        self.effects[key] = False
-                        print(f"Disabled text effect: {key}.")
-                    case key if key in self.effects and not self.effects[key]:
-                        print("Text effect already disabled.")
-                    case _:
-                        print(f"Invalid text effect: {name}.")
+    def enable_effect(self, name):
+        """ Allows for the addition or removal of the following text effects: 1. antialiasing; 2. bold; 3. italic """
+        match name:
+            case key if key in self.effects and not self.effects[key]:
+                self.effects[key] = True
+                print(f"Enabled text effect: {key}.")
+            case key if key in self.effects and self.effects[key]:
+                print("Text effect already enabled.")
+            case _:
+                print(f"Invalid text effect: {name}.")
+
 
     def check_effect_state(self, effect_name) -> bool:
         """ Checks the state of a given text effect. """
