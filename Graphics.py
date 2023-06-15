@@ -4,16 +4,6 @@ import sys
 pygame.font.init()
 
 
-class Color:
-    def __init__(self, red, green, blue):
-        """ Creates a new color. """
-        self.values = (red, green, blue)
-
-    def get_values(self):
-        """ Returns the values of the color. """
-        return self.values
-
-
 class Image:
     def __init__(self, image_name, folder_name=None):
         """ Loads in a new image and provides other useful image related functions. """
@@ -95,7 +85,7 @@ class Window:
 
     def add_color(self, color):
         """ Fills the game window with a solid color. """
-        self.window.fill(color.values)
+        self.window.fill(color)
 
     def set_current_scene(self, scene_name):  # weird exception handing
         """ Sets the current scene based off its name. """
@@ -134,6 +124,7 @@ class Window:
             self.set_current_scene(scene.name)
 
 
+
 class Scene:
     def __init__(self, name, window):
         self.name = name
@@ -153,7 +144,7 @@ class Scene:
             case "switch_scene_on_key_press":
                 self.functions.append(lambda: self.window.switch_scene_on_key_down(arg_1, arg_2))
             case _:
-                print("Error:\n - Function name may be invalid \n - Function arguments may be invalid ")
+                print(f"Error:\n - Function name may be invalid: {func_name}\n - Function arguments may be invalid: {arg_1}, {arg_2}, {arg_3}")
 
     def remove_function(self, func_name):
         """ Removes a function from the scene's list of functions. """
@@ -204,9 +195,7 @@ class Text(TextEffects):
         """ Creates a new label given a font. """
         is_aa = self.check_effect_state("is_antialiasing")
         if background_color is None:
-            label = font.render(text, is_aa, color.values)  # creates text with a transparent background
+            label = font.render(text, is_aa, color)  # creates text with a transparent background
         else:
-            label = font.render(text, is_aa, color.values, background_color.values)  # creates text with a given colored background
+            label = font.render(text, is_aa, color, background_color)  # creates text with a given colored background
         return label
-
-

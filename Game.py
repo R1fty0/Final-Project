@@ -1,4 +1,4 @@
-from Graphics import Window, Text, Color, Scene, Image
+from Graphics import Window, Text, Scene, Image
 
 """ Window """
 WIDTH = 800
@@ -20,16 +20,16 @@ def create_menu():
 
     # load the menu's header text
     header_font = "Roboto"
-    header_color = Color(255, 255, 255)
+    header_color = (255, 255, 255)
     header = Text(header_font, int(WIDTH / 10), "Main Menu", header_color)
 
     # load the menu's 'made by' text
-    made_by_font = "Roboto"
+    made_by_font = "Century Gothic"
     made_by_text = Text(made_by_font, int(WIDTH / 40), "Made by Mohit Sah", header_color)
 
     # load the menu's instructions to the user
-    instruction_font = "Roboto"
-    instruction_text = Text(instruction_font, int(WIDTH / 40), "Press any key to begin!", header_color)
+    instruction_font = "Ariel"
+    instruction_text = Text(instruction_font, int(WIDTH / 30), "Press any key to begin!", header_color)
 
     # adds the functions that will be run when the menu is running
     menu.add_function("add_image", menu_background, 0, 0)
