@@ -125,3 +125,11 @@ class Button(Collider):
             return True
         else:
             return False
+
+    def switch_scene(self, key, scene):
+        if not isinstance(scene, Scene):
+            print("Error: provided scene not of scene class. ")
+            return
+        key_pressed = pygame.key.get_pressed()
+        if key_pressed[key]:
+            self.set_current_scene(scene.name)

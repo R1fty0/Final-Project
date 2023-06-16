@@ -1,4 +1,4 @@
-from Graphics import Window, Text, Scene, Image
+from Graphics import Window, Text, Scene, Image, Button
 
 """ Window """
 WIDTH = 800
@@ -36,6 +36,10 @@ def create_menu():
     menu.add_function("add_text", header, WIDTH / 2 - header.text.get_width() / 2, HEIGHT / 4 - header.text.get_height() / 2)
     menu.add_function("add_text", made_by_text, WIDTH / 2 - made_by_text.text.get_width() / 2, HEIGHT / 3 - made_by_text.text.get_height() / 2)
     menu.add_function("add_text", instruction_text, WIDTH / 2 - instruction_text.text.get_width() / 2, HEIGHT / 1.2 - instruction_text.text.get_height() / 2)
+
+
+    # add a button to the screen
+    menu.add_function("add_button", Button(Text("Roboto", int(WIDTH/40), "Hello there", (198, 221, 223)), 200, 500, 100, 30, 2))
 
     # returns the menu scene
     return menu

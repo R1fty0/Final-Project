@@ -2,6 +2,8 @@ import pygame
 import os
 import sys
 pygame.font.init()
+from pygame.locals import *
+from Characters import Collider
 
 
 class Image:
@@ -54,11 +56,35 @@ class Animation:
         current_frame_index = 0
         return current_frame_time, current_frame_index
 
+class Utils:
+    def __init__(self, window):
+        """ Class that stores game functions that can run through the window. """
+        self.window = window
 
-class Window:
+    def add_image(self, image_object, x, y):
+        """ Draws an image to the game window at the given x and y coordinates. """
+        self.window.blit(image_object.image, (x, y))
+
+    def add_text(self, text_object, x, y):
+        """ Draws text to the game window. """
+        self.window.blit(text_object.text, (x, y))
+
+    def add_color(self, color):
+        """ Fills the game window with a solid color. """
+        self.window.fill(color)
+
+    def add_button(self, button):
+        """ Draws the button to the screen. """
+        pygame.draw.rect(self.window, button.color, button.collider, button.outline_width)
+        text_rect = button.text_object.text.get_rect(center=button.collider.center)
+        self.window.blit(button.text_object.text, text_rect)
+
+
+class Window(Utils):
     def __init__(self, width, height, name, fps, icon=None):
         """ Creates a new game window that can have images, colors, and text drawn onto it. """
         self.window = self.create_window(width, height, name, icon)
+        Utils.__init__(self, self.window)
         self.clock = pygame.time.Clock()
         self.fps = fps
         self.current_scene = None
@@ -74,24 +100,6 @@ class Window:
         else:
             pygame.display.set_icon(icon.image)
             return window
-
-    def add_image(self, image_object, x, y):
-        """ Draws an image to the game window at the given x and y coordinates. """
-        self.window.blit(image_object.image, (x, y))
-
-    def add_text(self, text_object, x, y):
-        """ Draws text to the game window. """
-        self.window.blit(text_object.text, (x, y))
-
-    def add_color(self, color):
-        """ Fills the game window with a solid color. """
-        self.window.fill(color)
-
-    def set_current_scene(self, scene_name):  # weird exception handing
-        """ Sets the current scene based off its name. """
-        for scene in self.scenes:
-            if scene.name == scene_name:
-                self.current_scene = scene
 
     def run(self):
         """ Runs the game window. """
@@ -115,18 +123,16 @@ class Window:
         except Exception as e:
             print(f"Error removing scene: {e}")
 
-    def switch_scene_on_key_down(self, key, scene):
-        if not isinstance(scene, Scene):
-            print("Error: provided scene not of scene class. ")
-            return
-        key_pressed = pygame.key.get_pressed()
-        if key_pressed[key]:
-            self.set_current_scene(scene.name)
-
+    def set_current_scene(self, scene_name):  # weird exception handing
+        """ Sets the current scene based off its name. """
+        for scene in self.scenes:
+            if scene.name == scene_name:
+                self.current_scene = scene
 
 
 class Scene:
     def __init__(self, name, window):
+        """ Creates a new scene that can be run in the game window. """
         self.name = name
         self.functions = []
         self.window = window
@@ -141,8 +147,8 @@ class Scene:
                 self.functions.append(lambda: self.window.add_text(arg_1, arg_2, arg_3))
             case "add_color":
                 self.functions.append(lambda: self.window.add_color(arg_1))
-            case "switch_scene_on_key_press":
-                self.functions.append(lambda: self.window.switch_scene_on_key_down(arg_1, arg_2))
+            case "add_button":
+                self.functions.append(lambda: self.window.add_button(arg_1))
             case _:
                 print(f"Error:\n - Function name may be invalid: {func_name}\n - Function arguments may be invalid: {arg_1}, {arg_2}, {arg_3}")
 
@@ -199,3 +205,26 @@ class Text(TextEffects):
         else:
             label = font.render(text, is_aa, color, background_color)  # creates text with a given colored background
         return label
+
+
+class Button(Collider):
+    def __init__(self, text, x, y, width, height, outline_width, color=None):
+        """ Creates a button that can be drawn to the screen. """
+        Collider.__init__(self, x, y, width, height)
+        self.x = x
+        self.y = y
+        if color is None:
+            self.color = (255, 255, 255)
+        else:
+            self.color = color
+        self.text_object = text
+        self.outline_width = outline_width
+
+    def on_clicked(self) -> bool:
+        """ Returns true if player clicked button. """
+        for event in pygame.event.get():
+            if event.type == MOUSEBUTTONDOWN:
+                if self.collider.collidepoint(event.pos):
+                    return True
+            else:
+                return False
