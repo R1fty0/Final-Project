@@ -9,9 +9,9 @@ WIDTH = 800
 HEIGHT = 800
 NAME = 'Computer Programming 12 Final Project'
 FPS = 75
-GAME_ICON = Image("enemyBlue3.png", "Enemies")
-GAME_ICON.scale_image(GAME_ICON.image.get_width()/3, GAME_ICON.image.get_height()/2)
-window = Window(WIDTH, HEIGHT, NAME, FPS, GAME_ICON)
+# GAME_ICON = Image("enemyBlue3.png", "Enemies")
+# GAME_ICON.scale_image(GAME_ICON.image.get_width()/3, GAME_ICON.image.get_height()/2)
+window = Window(WIDTH, HEIGHT, NAME, FPS)
 
 
 def create_menu():

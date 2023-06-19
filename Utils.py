@@ -1,5 +1,6 @@
 import pygame
 import os
+import sys
 
 """
     Image 
@@ -79,3 +80,84 @@ class Text(TextEffects):
 
     def get_text(self):
         return self.label
+
+
+
+
+
+class GameManager:
+
+    def __init__(self, window_width, window_height, window_name, window_icon):
+        self.active_scene = None
+        self.scenes = list()
+        self.window = self.create_window(window_width, window_height, window_name, window_icon)
+
+    @staticmethod
+    def create_window(width, height, name, icon):
+        """ Creates a new game window. """
+        window = pygame.display.set_mode((width, height))
+        pygame.display.set_caption(name)
+        if icon is None:
+            return window
+        else:
+            pygame.display.set_icon(icon.image)
+            return window
+
+    def set_active_scene(self, scene_name):
+        """ Sets the active scene of the game. """
+        for scene in self.scenes:
+            if scene.name == scene_name:
+                self.active_scene = scene
+
+    def add_scene(self, scene):
+        """ Adds a scene to the game manager. """
+        if not isinstance(scene, Scene):
+            print(f"The following scene: {scene} is not an instance of the scene class. ")
+        self.scenes.append(scene)
+
+    def draw(self, _object, x=None, y=None):
+        object_name = ''
+        match _object:
+            # object is text
+            case isinstance(_object, Text()):
+                object_name = 'text'
+            # object is an image
+            case isinstance(_object, Image()):
+                object_name = 'image'
+            # object is a color
+            case isinstance(_object, tuple()):
+                object_name = 'color'
+        # object is none of the above
+        if object_name is None:
+            return
+        else:
+            # draw image or text
+            if object_name == 'string' or 'text':
+                self.window.blit(_object, (x, y))
+            # fill window with color
+            else:
+                self.window.fill(_object)
+
+    def run_scene_functions(self):
+        """ Run functions in active scene. """
+        try:
+            for event in self.active_scene.functions:
+                event()
+            pygame.display.update()
+        except AttributeError:
+            print("-> Error: No active scene assigned!")
+            self.quit_game()
+
+    def quit_game(self):
+        """ Quits the game and closes the game window."""
+        pygame.quit()
+        sys.exit()
+
+class Scene:
+    def __init__(self, name, game_manager: GameManager):
+        self.name = name
+        self.functions = list()
+        game_manager.add_scene(self)
+
+    def add_function(self):
+        pass
