@@ -15,8 +15,10 @@ class Image:
     @staticmethod
     def load_image(folder_name, image_name):
         """ Loads a new image into the game. """
+        # load image when not in folder
         if folder_name is None:
             image = pygame.image.load(image_name)
+        # load image from folder
         else:
             image = pygame.image.load(os.path.join(folder_name, image_name))
         return image
@@ -24,6 +26,9 @@ class Image:
     def scale_image(self, width, height):
         """ Scales the class's image. """
         self.image = pygame.transform.scale(self.image, (width, height))
+
+    def get_image(self):
+        return self.image
 
 
 """ 
@@ -38,9 +43,11 @@ class TextEffects:
     def enable_effect(self, name):
         """ Allows for the addition or removal of the following text effects: 1. antialiasing; 2. bold; 3. italic """
         match name:
+            # enable effect
             case key if key in self.effects and not self.effects[key]:
                 self.effects[key] = True
                 print(f"Enabled text effect: {key}.")
+            # tell user that text effect is enabled
             case key if key in self.effects and self.effects[key]:
                 print("Text effect already enabled.")
             case _:
@@ -64,30 +71,33 @@ class Text(TextEffects):
 
     def load_font(self, font_name, font_size) -> pygame.font:
         """ Creates a new font."""
+        # check if text is bold or italic
         is_bold = self.get_effect_state("is_bold")
         is_italic = self.get_effect_state("is_italic")
+        # load font
         font = pygame.font.SysFont(font_name, font_size, is_bold, is_italic)
         return font
 
     def create_label(self, font, color, text, background_color):
         """ Creates a new label given a font. """
+        # check if text has antialiasing effect
         is_aa = self.get_effect_state("is_antialiasing")
+        # load font with transparent background
         if background_color is None:
-            label = font.render(text, is_aa, color)  # creates text with a transparent background
+            label = font.render(text, is_aa, color)
+        # load font with given background
         else:
-            label = font.render(text, is_aa, color, background_color)  # creates text with a given colored background
+            label = font.render(text, is_aa, color, background_color)
         return label
 
     def get_text(self):
         return self.label
 
 
-
-
-
 class GameManager:
 
     def __init__(self, window_width, window_height, window_name, window_icon):
+        """ Handles game visuals and game events. """
         self.active_scene = None
         self.scenes = list()
         self.window = self.create_window(window_width, window_height, window_name, window_icon)
@@ -116,48 +126,44 @@ class GameManager:
         self.scenes.append(scene)
 
     def draw(self, _object, x=None, y=None):
-        object_name = ''
-        match _object:
-            # object is text
-            case isinstance(_object, Text()):
-                object_name = 'text'
-            # object is an image
-            case isinstance(_object, Image()):
-                object_name = 'image'
-            # object is a color
-            case isinstance(_object, tuple()):
-                object_name = 'color'
-        # object is none of the above
-        if object_name is None:
-            return
-        else:
-            # draw image or text
-            if object_name == 'string' or 'text':
-                self.window.blit(_object, (x, y))
-            # fill window with color
-            else:
-                self.window.fill(_object)
+        """ Draws a given object that is either a color, text, or image. """
+        # object is text
+        if isinstance(_object, Text):
+            self.window.blit(_object.get_text(), (x, y))
+        # object is an image
+        elif isinstance(_object, Image):
+            self.window.blit(_object.get_image(), (x, y))
+        # object is a color
+        elif isinstance(_object, tuple()):
+            self.window.fill(_object)
 
     def run_scene_functions(self):
         """ Run functions in active scene. """
         try:
+            # call functions
             for event in self.active_scene.functions:
                 event()
+            # update screen
             pygame.display.update()
         except AttributeError:
             print("-> Error: No active scene assigned!")
             self.quit_game()
 
-    def quit_game(self):
+    @staticmethod
+    def quit_game():
         """ Quits the game and closes the game window."""
         pygame.quit()
         sys.exit()
+
 
 class Scene:
     def __init__(self, name, game_manager: GameManager):
         self.name = name
         self.functions = list()
+        self.game_manager = game_manager
         game_manager.add_scene(self)
 
-    def add_function(self):
-        pass
+    # double check method name
+    def draw_object(self, _object, x=None, y=None):
+        """ Adds a function that will draw an image, text or color to the screen when the scene is run. """
+        self.functions.append(lambda: self.game_manager.draw(_object, x, y))

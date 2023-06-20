@@ -15,7 +15,7 @@ class Scene:
             case "draw_text":
                 self.functions.append(lambda: self.window.draw_text(arg_1, arg_2, arg_3))
             case "draw_color":
-                self.functions.append(lambda: self.window.draw_color(arg_1))
+                self.functions.append (lambda: self.window.draw_color(arg_1))
             case "draw_button":
                 self.functions.append(lambda: self.window.draw_button(arg_1))
             case _:
