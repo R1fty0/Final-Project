@@ -94,36 +94,9 @@ class Text(TextEffects):
         return self.label
 
 
-class GameManager:
-
-    def __init__(self, window_width, window_height, window_name, window_icon):
-        """ Handles game visuals and game events. """
-        self.active_scene = None
-        self.scenes = list()
-        self.window = self.create_window(window_width, window_height, window_name, window_icon)
-
-    @staticmethod
-    def create_window(width, height, name, icon):
-        """ Creates a new game window. """
-        window = pygame.display.set_mode((width, height))
-        pygame.display.set_caption(name)
-        if icon is None:
-            return window
-        else:
-            pygame.display.set_icon(icon.image)
-            return window
-
-    def set_active_scene(self, scene_name):
-        """ Sets the active scene of the game. """
-        for scene in self.scenes:
-            if scene.name == scene_name:
-                self.active_scene = scene
-
-    def add_scene(self, scene):
-        """ Adds a scene to the game manager. """
-        if not isinstance(scene, Scene):
-            print(f"The following scene: {scene} is not an instance of the scene class. ")
-        self.scenes.append(scene)
+class GameUtils:
+    def __init__(self, window):
+        self.window = window
 
     def draw(self, _object, arg_1=None, arg_2=None):
         """ Draws a given object (args): color (values), text (x, y), image (x, y) or button (color, rect). """
@@ -136,29 +109,58 @@ class GameManager:
         # object is a color
         elif isinstance(_object, tuple()):
             self.window.fill(_object)
-        # object is a button
-        elif isinstance(_object, Button):
-            pygame.draw.rect(self.window, _object.outline_color, _object.rect, _object.outline_thickness)
-            text_rect = _object.text.get_text().get_rect(center=_object.rect.get_rect().center)
-            self.window.blit(_object.text.get_text(), text_rect)
 
-    def load_scene_on_button_pressed(self, button, scene_name):
-        """ Loads a given scene when the given button is pressed. """
-        if button.is_clicked():
-            self.set_active_scene(scene_name)
+
+class SceneManager:
+    def __init__(self, game_manager):
+        self.game_manager = game_manager
+        self.active_scene = None
+        self.scenes = list()
+
+    def set_active_scene(self, scene):
+        """ Sets the active scene of the game. """
+        for _scene in self.scenes:
+            if _scene.name == scene.name:
+                self.active_scene = _scene
+
+    def add_scene(self, scene):
+        """ Adds a scene to the game manager. """
+        if not isinstance(scene, Scene):
+            print(f"The following scene: {scene} is not an instance of the scene class. ")
+        self.scenes.append(scene)
 
     def run_scene_functions(self):
         """ Run functions in active scene. """
         try:
-            pygame.display.update()
             # call functions
             for event in self.active_scene.functions:
                 event()
                 print(f"Scene: {self.active_scene.name} is active")
                 # update screen
+            pygame.display.update()
         except AttributeError:
             print("-> Error: No active scene assigned!")
-            self.quit_game()
+            self.game_manager.quit_game()
+
+
+class GameManager(GameUtils, SceneManager):
+
+    def __init__(self, window_width, window_height, window_name, window_icon):
+        """ Handles game visuals and game events. """
+        self.window = self.create_window(window_width, window_height, window_name, window_icon)
+        GameUtils.__init__(self, self.window)
+        SceneManager.__init__(self, self)
+
+    @staticmethod
+    def create_window(width, height, name, icon):
+        """ Creates a new game window. """
+        window = pygame.display.set_mode((width, height))
+        pygame.display.set_caption(name)
+        if icon is None:
+            return window
+        else:
+            pygame.display.set_icon(icon.image)
+            return window
 
     @staticmethod
     def quit_game():
@@ -166,22 +168,29 @@ class GameManager:
         pygame.quit()
         sys.exit()
 
+    def run_game(self):
+        while True:
+            # Handle events
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.quit_game()
+            self.run_scene_functions()
+
 
 class Scene:
     def __init__(self, name, game_manager: GameManager):
         self.name = name
         self.functions = list()
+        self.behavior = list()
         self.game_manager = game_manager
         game_manager.add_scene(self)
 
-    # double check method name
-    def add_visual(self, _object, x=None, y=None):
-        """ Adds a function that will draw an image, text or color to the screen when the scene is run. """
-        self.functions.append(lambda: self.game_manager.draw(_object, x, y))
+    def add_function(self, _type, _object, arg_1=None, arg_2=None):
+        if _type.upper() == 'IMAGE' or 'TEXT':
+            self.functions.append(lambda: self.game_manager.draw(_object, arg_1, arg_2))
+        elif _type.upper == 'COLOR':
+            self.functions.append(lambda: self.game_manager.draw(_object))
 
-    def add_scene_trigger(self, trigger_object, scene):
-        if isinstance(trigger_object, Button):
-            self.functions.append(lambda: self.game_manager.load_scene_on_button_pressed(trigger_object, scene.name))
 
 
 class Rect:
@@ -216,14 +225,13 @@ class Button:
         self.text = text
         self.outline_thickness = outline_thickness
 
-    def is_clicked(self) -> bool:
+    def is_clicked(self, event) -> bool:
         """ Returns true if player clicked button. """
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.rect.get_rect().collidepoint(event.pos):
-                    print("clicked")
-                    return True
-                else:
-                    print("No click")
-                    return False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.get_rect().collidepoint(event.pos):
+                print("clicked")
+                return True
+            else:
+                print("No click")
+                return False
 
