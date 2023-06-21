@@ -4,10 +4,11 @@ import os
 
 
 class GraphicsManager:
-    def __init__(self, window):
+    def __init__(self, window, frame_rate):
         self.window = window
         self.active_scene = None
         self.scenes = list()
+        self.frame_rate = frame_rate
 
     def set_active_scene(self, scene):
         """ Sets the active scene of the game. """
@@ -22,7 +23,20 @@ class GraphicsManager:
         self.scenes.append(scene)
 
     def get_window(self):
-        return self.window
+        return self.window.window
+
+    def run(self):
+        clock = pygame.time.Clock()
+        while True:
+            # Handle events
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.window.quit_game()
+            for _function in self.active_scene.functions:
+                _function()
+            pygame.display.flip()
+            clock.tick(self.frame_rate)
+
 
 
 class Window:
@@ -117,7 +131,7 @@ class TextEffects:
             case _:
                 print(f"Invalid text effect: {name}.")
 
-    def get_effect_state(self, effect_name) -> bool:
+    def get_effect_state(self, effect_name):
         """ Checks the state of a given text effect. """
         if self.effects.get(effect_name) is not None:
             if not self.effects[effect_name]:  # if the effect is set to false
@@ -134,8 +148,9 @@ class Text(TextEffects):
         self.label = self.create_label(self.font, color, text, background_color)
         self.coordinates = (x, y)
 
-    def load_font(self, font_name, font_size) -> pygame.font:
+    def load_font(self, font_name, font_size):
         """ Creates a new font."""
+        pygame.font.init()  # Initialize the font module
         # check if text is bold or italic
         is_bold = self.get_effect_state("is_bold")
         is_italic = self.get_effect_state("is_italic")
