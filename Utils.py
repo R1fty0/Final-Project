@@ -192,7 +192,6 @@ class Scene:
             self.functions.append(lambda: self.game_manager.draw(_object))
 
 
-
 class Rect:
     def __init__(self, x, y, width, height):
         self.rect = self.create_rect(x, y, width, height)
