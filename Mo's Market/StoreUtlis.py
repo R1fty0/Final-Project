@@ -1,4 +1,9 @@
 
+class StoreManager:
+    def __init__(self):
+        pass
+
+
 class Item:
     def __init__(self, name, price, description):
         self.name = name
@@ -17,7 +22,7 @@ class Item:
 
 class Inventory:
     def __init__(self):
-        self.stock = dict()
+        self.inventory = dict()
 
     def add_item(self, item):
         # add item name and item class to dictionary
@@ -33,9 +38,15 @@ class Warehouse:
         self.stock = dict()
 
     def add_inventory(self):
+        """ Add an inventory to the warehouse's stock. """
         pass
 
     def update_inventory(self):
+        """ Add or remove an item from one of the warehouse's inventories. """
+        pass
+
+    def get_inventory(self):
+        """ Get an inventory from the warehouse's stock. """
         pass
 
 
@@ -54,3 +65,35 @@ class User:
     def update_balance(self):
         pass
 
+
+class UserActions:
+    def __init__(self):
+        pass
+
+    def buy_item(self):
+        pass
+
+    def return_item(self):
+        pass
+
+    def change_password(self):
+        pass
+
+
+class UserInventory(Inventory):
+    def __init__(self):
+        Inventory.__init__(self)
+
+    def view_purchased_items(self):
+        pass
+
+
+class ShoppingCart:
+    def __init__(self):
+        pass
+
+    def view_shopping_cart(self):
+        pass
+
+    def update_shopping_cart(self):
+        pass
